@@ -255,3 +255,5 @@ lapply(numeros, mean)
 
 ?sapply
 sapply(numeros, mean)
+
+numeros<- NULL
