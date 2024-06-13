@@ -94,7 +94,6 @@ for(i in 1:9){
 while(i<15){
   print(i)
   i<-i+1
-  
 }
 
 #Criação de Funções
