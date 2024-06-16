@@ -56,3 +56,31 @@ ggplot(dados,
     panel.grid.minor = element_blank(),
     axis.line = element_line(color = "black")
   )
+#questçao 2 estudo dirigido
+pnb<-read_excel("Q2-Estudodirigido.xlsx")
+
+print(head(pnb))
+mod2<- lm(PNB ~ M1,pnb)
+summary(mod2)
+
+mod2<- lm(PNB ~ M2,pnb)
+summary(mod2)
+
+mod2<- lm(PNB ~ M3,pnb)
+summary(mod2)
+
+mod2<- lm(PNB ~ L,pnb)
+summary(mod2)
+
+#Questão 3 Estudo dirigido
+bd3<-read_excel("Q3-estudodirigido.xlsx")
+print(head(bd3))
+
+mod3<-lm(Y ~ x1t+x2t+x3t+x4t,bd3)
+summary(mod3)
+
+mod4<-lm(log(Y) ~ x1t+x2t+x3t+x4t,bd3)
+summary(mod4)
+
+loglog<-lm(log(Y) ~ log(x1t)+log(x2t)+log(x3t)+log(x4t),bd3)
+summary(loglog)
