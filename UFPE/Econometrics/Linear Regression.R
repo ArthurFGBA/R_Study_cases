@@ -63,6 +63,22 @@ print(head(pnb))
 mod2<- lm(PNB ~ M1,pnb)
 summary(mod2)
 
+ggplot(data=pnb, 
+       aes(x = M1,y = PNB))+
+  geom_point(shape = 21, fill = "white", color = "#222631",
+             size = 3, stroke = 0.5) +
+  geom_smooth(method = "lm", color = "#aa3f3b", se = FALSE) +
+  scale_x_continuous(labels = comma_format(big.mark = ".")) +
+  scale_y_continuous(labels = comma_format(big.mark = ".")) +
+  labs(title = "Estudo Dirigido 01: Questão 06",
+       x = "M1",
+       y = "PNB") +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.line = element_line(color = "black")
+  )
+  
 mod2<- lm(PNB ~ M2,pnb)
 summary(mod2)
 
@@ -84,3 +100,10 @@ summary(mod4)
 
 loglog<-lm(log(Y) ~ log(x1t)+log(x2t)+log(x3t)+log(x4t),bd3)
 summary(loglog)
+
+#Questão 6
+bd6<-read_excel("Q6-b1^.xlsx")
+print(head(bd6))
+
+modb11<-lm(TESTSCORE ~ STR+EL,bd6)
+summary(modb11)
