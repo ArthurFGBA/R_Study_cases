@@ -23,23 +23,12 @@ library('stringr')
 library('scales')
 library('dplyr')
 
-dados<- read_excel("Despesas_India (3).xlsx")
+dados<- read_excel("Despesas_India (3).xlsx") #Regressão linear simples
 print(head(dados))
 
-mod<- lm(Despesas_Alimentacao ~ Despesa_Total,dados)
+mod<- lm(Despesas_Alimentacao ~ Despesa_Total,dados) 
 summary(mod)
 plot(mod)
-
-ggplot(dados, aes(X = Despesa_Total, y = Despesas_Alimentacao))+
-geom_point()+
-geom_smooth( method= "lm" , color="red", se = FALSE)+
-scale_x_continuous(labels = comma_format(big.mark = ".")) +
-scale_y_continuous(labels = comma_format(big.mark = "."))+
-theme_classic()
-
-
-## 'geo_smooth' using formula 'y ~ x'
-#ggsave(""dpi=500)
 
 ggplot(dados,
        aes(x = Despesa_Total, y = Despesas_Alimentacao)) +
@@ -56,11 +45,11 @@ ggplot(dados,
     panel.grid.minor = element_blank(),
     axis.line = element_line(color = "black")
   )
-#questçao 2 estudo dirigido
+#questçao 2 estudo dirigido Comparação de regressões
 pnb<-read_excel("Q2-Estudodirigido.xlsx")
 
 print(head(pnb))
-mod2<- lm(PNB ~ M1,pnb)
+mod2<- lm(PNB ~ M1,pnb) 
 summary(mod2)
 
 ggplot(data=pnb, 
@@ -88,7 +77,8 @@ summary(mod2)
 mod2<- lm(PNB ~ L,pnb)
 summary(mod2)
 
-#Questão 3 Estudo dirigido
+#Questão 3 Estudo dirigido Regressões lineares multiplas
+#Regressões logaritimicas multiplas
 bd3<-read_excel("Q3-estudodirigido.xlsx")
 print(head(bd3))
 
@@ -101,7 +91,7 @@ summary(mod4)
 loglog<-lm(log(Y) ~ log(x1t)+log(x2t)+log(x3t)+log(x4t),bd3)
 summary(loglog)
 
-#Questão 6
+#Questão 6 Regressão linear multipla
 bd6<-read_excel("Q6-b1^.xlsx")
 print(head(bd6))
 
