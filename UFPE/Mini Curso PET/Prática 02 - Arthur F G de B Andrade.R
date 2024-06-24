@@ -70,7 +70,7 @@ women_db<-as.tibble(women)
 str(women_db)
 
 ggplot(women_db, aes(x = weight, y = height))+
-  geom_line(color = 'black', linewidth = 1, linetype = 1)
+  geom_line(color = 'black', linewidth = 1, linetype = 1)+
 labs(title = "USA Women height x weight",
      x = "weight",
      y = "height")+
