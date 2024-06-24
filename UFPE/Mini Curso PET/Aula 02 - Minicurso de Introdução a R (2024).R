@@ -5,7 +5,6 @@
 #---------------------------------------------------
 
 # PACOTES
-# install.packages("readr")
 # install.packages("dplyr")
 # install.packages("stringr")
 # install.packages("lubridate")
@@ -73,21 +72,23 @@ df <- read_csv2("~/MeusProjetos/R_Study_cases/UFPE/Mini Curso PET/IPCA.csv",
                  col_select = c("Time","IPCA"),
                  skip = 1,
                  col_types = cols(
-                  Time = col_date(format = "%y.%m"),
+                  Time = col_date(format = "%Y.%m"),
                   IPCA = col_double()
                   )
                 )
 lag(df$IPCA)
 
+# Aplicações
 df <- df %>%
-  mutate(inflacao = IPCA/lag(IPCA),
-         inflacao_2 = inflacao-1,
-         inflacao_percent = inflacao_2*100,
-         acumulada = cumprod(inflacao))
+  mutate(inflacao         = IPCA / lag(IPCA),
+         inflacao_2       = inflacao - 1,
+         inflacao_percent = inflacao_2 * 100,
+         
+         inflacao         = replace(inflacao, 1, 1),
+         acumulada        = cumprod(inflacao),
+         inflacao         = replace(inflacao, 1, NA))
 
-
-
-
+# Aplicações para trimestres
 df_mensal <- df %>%
   filter(month(Time) %in% c(3, 6, 9, 12)) %>%
   select(Time, IPCA)
@@ -114,6 +115,9 @@ intensi <- function(x){
   }
 }
 
+?map_chr # Utilizando para aplicar a função intensi() em um vetor
+
+# Colocando em fator para organizar os gráficos
 df <- df %>%
   mutate(intensidade = factor(map_chr(inflacao, intensi), levels = c("BAIXA", "MEDIANA", "ALTA")))
 
@@ -223,7 +227,7 @@ ggplot(airquality, aes(x = Ozone, y = Temp)) +
         )
 
 # PNG, PDF, JPEG, TIFF e SVG.
-ggsave("/home/caio/Documentos/Faculdade/PET Economia UFPE/Curso R/plot.pdf", plot = final, width = 5, height = 5)
+ggsave("C:/Users/Arthu/OneDrive/Documentos/MeusProjetos/R_Study_case/UFPE/Mini Curso PET", plot = final, width = 5, height = 5)
 
 
 #---------------------------------------------------

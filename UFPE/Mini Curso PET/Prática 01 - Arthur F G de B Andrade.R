@@ -47,37 +47,36 @@ ftok<-function(f){
 ftok(75.6)
 
 #Questão 3
-class<-0
 for (i in 1:1){
-tele <- readline(prompt = "Telefonou para a vítima? ")
-if(toupper(tele)=="SIM"){
-  class<-class+1L
-}
-loc <- readline(prompt = "Esteve no local do crime? ")
-if(toupper(loc)=="SIM"){
-  class<-class+1L
-}
-liv <- readline(prompt = "Mora perto da vítima? ")
-if(toupper(liv)=="SIM"){
-  class<-class+1L
-}
-debt <- readline(prompt = "Devia para a vítima? ")
-if(toupper(debt)=="SIM"){
-  class<-class+1L
-}
-job <- readline(prompt = "Já trabalhou com a vítima? ")
-if(toupper(job)=="SIM"){
-  class<-class+1L
-}
+  class<-0
+  tele <- readline(prompt = "Telefonou para a vítima? ")
+  if(toupper(tele)=="SIM"){
+    class<-class+1L
+  }
+  loc <- readline(prompt = "Esteve no local do crime? ")
+  if(toupper(loc)=="SIM"){
+    class<-class+1L
+  }
+  liv <- readline(prompt = "Mora perto da vítima? ")
+  if(toupper(liv)=="SIM"){
+    class<-class+1L
+  }
+  debt <- readline(prompt = "Devia para a vítima? ")
+  if(toupper(debt)=="SIM"){
+    class<-class+1L
+  }
+  job <- readline(prompt = "Já trabalhou com a vítima? ")
+  if(toupper(job)=="SIM"){
+    class<-class+1L
+  }
 
-if(class == 5){
-  print("Assassino")
-}else if ((class == 3) | (class == 4)){
-  print("Cúmplice")
-}else if(class == 2){
-  print("Suspeita")
-}else{
-  print("Inocente")
-}
-class<-0
+  if(class == 5){
+    print("Assassino")
+  }else if ((class == 3) | (class == 4)){
+    print("Cúmplice")
+  }else if(class == 2){
+    print("Suspeito")
+  }else{
+    print("Inocente")
+  }
 }
