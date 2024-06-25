@@ -55,11 +55,11 @@ starwars %>%
 starwars %>%
   mutate(hair_color = ifelse(is.na(hair_color), "Unknow", hair_color))
 
-#Parametro especiais: .keep all(todas), used(unica alterada), unused(não anterada), none(apneas a transformada)
+#Special Parameters: .keep all(todas), used(unica alterada), unused(não anterada), none(apneas a transformada)
 starwars %>%
   mutate(hair_color = ifelse(is.na(hair_color), "Unknow", hair_color), .keep = "unused"
          )
-# .before to define where do you whant the new column
+# .before to define where do you want the new column
 starwars %>%
   mutate(
     mass_100 = ifelse(mass > 100, "Y", "N"), .before = "hair_color"
