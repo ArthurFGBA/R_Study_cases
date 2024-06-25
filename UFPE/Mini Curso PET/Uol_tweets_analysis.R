@@ -6,7 +6,7 @@ library(moments)
 
 db<-read.csv("C:/Users/Arthu/Downloads/tweets_uol.csv", header = TRUE)
 
-skim(db)
+skim(db)  #Data verification
 
 db %>%
   group_by(source) %>%
@@ -51,3 +51,43 @@ db %>%
   summarise(
     numero_de_tweets = n()
   )
+
+#Simple chats 
+
+data(mtcars)
+mtcars<- as.tibble(mtcars)
+#Simple histogram 
+hist(mtcars$mpg)
+
+#Test data normality
+qqnorm(mtcars$mpg) 
+qqline(mtcars$mpg)
+
+#frequency table 
+table(mtcars$gear)
+
+barplot(table(mtcars$gear))
+
+barplot(table(cut(mtcars$mpg, seq(10,35,5))))
+
+#SQL inside R 
+install.packages("sqldf")
+library(sqldf)
+
+data("airquality")
+?airquality
+airquality<- as.tibble(airquality)
+
+sql = "
+  SELECT * 
+  FROM airquality
+  WHERE MONTH = 5
+"
+sql<-sqldf(sql)
+
+sql = "
+  SELECT AVG(temp) as avg_temp 
+  FROM airquality
+  GROUP BY month
+"
+sqldf(sql)
