@@ -24,7 +24,7 @@ library(quantreg)
 library(readr)
 library("readxl")
 
-dados1<-read_excel("~/MeusProjetos/R_Study_cases/UFPE/Mini Curso PET/GPA-ACT.xlsx")
+dados1<-read_excel("~/MeusProjetos/R_Study_cases/UFPE/PET mini course/GPA-ACT.xlsx")
 dados1$GPA<-as.numeric(dados1$GPA)
 
 # Gráfico de dispersão
