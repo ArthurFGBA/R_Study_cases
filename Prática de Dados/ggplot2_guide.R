@@ -138,4 +138,18 @@ starwars %>%
   geom_bar(stat = "identity", position = "dodge")+
   geom_label(position = position_dodge(width = 1), size = 3)
 
+#Error Bar - to show variability of the data
+medias<- starwars %>%
+  filter(!is.na(height)) %>%
+  group_by(gender) %>%
+  summarise( 
+    mean = mean(height), 
+    sup_limit = mean(height) + sd(height),
+    inf_limit = mean(height) - sd(height)
+    )
+
+medias %>%
+  ggplot(aes(x = gender, y = mean, color = gender))+
+  geom_bar(stat = "identity")+
+  geom_errorbar(aes( ymin = inf_limit, ymax = sup_limit), width = 0.2)
   
