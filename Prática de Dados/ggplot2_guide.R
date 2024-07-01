@@ -147,9 +147,112 @@ medias<- starwars %>%
     sup_limit = mean(height) + sd(height),
     inf_limit = mean(height) - sd(height)
     )
+medias 
 
 medias %>%
   ggplot(aes(x = gender, y = mean, color = gender))+
-  geom_bar(stat = "identity")+
-  geom_errorbar(aes( ymin = inf_limit, ymax = sup_limit), width = 0.2)
+  geom_bar(stat = "identity", fill = "lightblue")+
+  geom_errorbar(aes( ymin = inf_limit, ymax = sup_limit), width = 0.4)
+
+medias %>%
+  ggplot(aes(x = gender, y = mean))+
+  geom_pointrange(aes( ymin = inf_limit, ymax = sup_limit))
+
+#Experiment test A/B
+dados <- data.frame(
+  metricas<- c("m1", "m2", "m3", "m4", "m5"),
+  limite_inferior <- c(-3.5,-2.4,1,4,8),
+  limite_superior <- c(1,1.5,3,7,10),
+  significativo <- c("não", "não", "sim", "sim", "sim")
+)
+dados 
+
+#Confidence interval
+dados %>%
+  ggplot(aes(x = metricas, color = significativo)) +
+  geom_errorbar(aes(ymin = limite_inferior, ymax = limite_superior), width = 0.3) +
+  geom_hline(yintercept = 0, linetype = "dotted")+
+  labs(title = "Gráfico com Barras de Erro",
+       x = "Métricas",
+       y = "Valores",
+       color = "Significativo") +
+  theme_minimal()+
+  coord_flip()
+
+#Distribution by group
+starwars %>%
+  ggplot(aes(x = gender, y = height ))+
+  geom_boxplot()
+
+#Violin chart
+starwars %>%
+  ggplot(aes(x = gender, y = height))+
+  geom_violin()
+
+#Dispersion chat
+starwars %>%
+  ggplot(aes(x = gender, y = height))+
+  geom_point()+
+
+#jitter
+starwars %>%
+  ggplot(aes(x = gender, y = height))+
+  geom_jitter(width = 0.3)
+
+##line chats
+data(economics)
+
+economics %>%
+  ggplot(aes(x = date, y = unemploy))+
+  geom_line(linewidth = 1, linetype = 1)
+
+economics %>%
+  ggplot(aes(x = date, y = unemploy))+
+  geom_line(linewidth = 1, linetype = 1)+
+  geom_smooth(method = "loess", se = FALSE) #se =  false to remove te confidence interval
   
+economics %>%
+  ggplot(aes(x = date, y = unemploy))+
+  geom_line(linewidth = 1, linetype = 1)+
+  scale_x_date(limits = c(as.Date("1990-01-01"),as.Date("1999-12-31"))) #Filter a period of time 
+
+install.packages("gapminder")
+library(gapminder)
+?gapminder
+data(gapminder)
+
+gapminder %>%
+  filter(country == "Brazil") %>%
+  ggplot(aes(x = year, y = pop))+
+  geom_line(linewidth = 1)+
+  geom_point(size = 2,color = "blue")
+
+gapminder %>%
+  filter(country  %in% c("Brazil", "Uruguay", "Argentina")) %>%
+  ggplot(aes(x = year, y = pop, color = country))+
+  geom_line(linewidth = 1)+
+  geom_point(size = 2)
+
+#What to do over a pie chat
+genero<-  starwars %>%
+  group_by(gender) %>%
+  summarise(n = n())
+
+genero %>%
+  ggplot(aes(x = gender, y = n, fill = gender, label = n))+
+  geom_bar(stat = "identity")+
+  geom_label( position = position_dodge(width = 1), size = 3)+
+  coord_flip()
+
+genero %>%
+  ggplot(aes(x = "", y = n, fill = gender, label = n))+
+  geom_bar(stat = "identity", width = 3)+
+  geom_label( position = position_stack(vjust = 0.5), size = 3)+
+  coord_flip()
+
+genero %>%
+  ggplot(aes(x = "", y = n, fill = gender, label = n))+
+  geom_bar(stat = "identity")+
+  coord_polar(theta = "y", start = 0)+
+  geom_label( position = position_stack(vjust = 0.5), size = 3)+
+  theme_void()
