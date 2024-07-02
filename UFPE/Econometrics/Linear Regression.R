@@ -79,7 +79,7 @@ summary(mod2)
 
 #Questão 3 Estudo dirigido Regressões lineares multiplas
 #Regressões logaritimicas multiplas
-bd3<-read_excel("Q3-estudodirigido.xlsx")
+bd3<-read_excel("C:/Users/Arthu/Downloads/Q3-estudodirigido.xlsx")
 print(head(bd3))
 
 mod3<-lm(Y ~ x1t+x2t+x3t+x4t,bd3)
@@ -97,3 +97,4 @@ print(head(bd6))
 
 modb11<-lm(TESTSCORE ~ STR+EL,bd6)
 summary(modb11)
+

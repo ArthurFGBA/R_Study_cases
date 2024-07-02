@@ -256,3 +256,69 @@ genero %>%
   coord_polar(theta = "y", start = 0)+
   geom_label( position = position_stack(vjust = 0.5), size = 3)+
   theme_void()
+
+#Correlation Chart
+data(mtcars)
+str(mtcars)
+
+mtcars<- as.tibble(mtcars)
+
+mtcars %>%
+  ggplot(aes(x = wt, y = mpg))+
+  geom_point()
+
+#Correlation 
+# r = 1 Direct correlation
+# r = 0  there is no correlation
+# r = -1 Inverse correlation 
+
+cor(mtcars$wt,mtcars$mpg)
+
+cor(mtcars)
+
+library(ggcorrplot)
+
+correl<- cor(mtcars)
+
+ggcorrplot(correl)
+
+ggcorrplot(correl, method = "circle")
+
+#Sorting the variabel by its hierarquical position
+ggcorrplot(correl, hc.order = TRUE)
+
+#To eliminate duplicated values
+ggcorrplot(
+  correl,
+  hc.order = TRUE,
+  type = "lower"
+)
+
+#Adding a label
+ggcorrplot(
+  correl,
+  hc.order = TRUE,
+  type = "lower",
+  lab = TRUE, 
+  lab_size = 3
+)
+
+#Let in blank non significant correl
+cor_pmat(mtcars)
+
+ggcorrplot(
+  correl,
+  hc.order = TRUE,
+  type = "lower",
+  lab = TRUE, 
+  lab_size = 3,
+  p.mat = cor_pmat(mtcars), #p value matriz
+  insig = "blank"
+)
+
+install.packages("GGally")
+library(GGally)
+
+mtcars %>%
+  select(mpg, disp, hp, wt)%>%
+  ggpairs()
