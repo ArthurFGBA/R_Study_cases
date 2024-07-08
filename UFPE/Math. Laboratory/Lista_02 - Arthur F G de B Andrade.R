@@ -1,7 +1,3 @@
-install.packages("tidyverse")
-library(tidyverse)
-install.packages("readxl")
-library(readxl)
 
 ##Questão 01
 
@@ -18,7 +14,6 @@ model<-lm(Depositos_totais ~ PIB+Populacao+Renda_per_capita, q1)
 summary(model)
 
 sprintf('Os resultados obtido no modelo de regressão com os dados para cada coeficiente foi intercepto: %s, beta1: %s, beta2: %s e beta3: %s.', model[[1]][1], model[[1]][2], model[[1]][3], model[[1]][4])
-model[[1]][1]
 
 #Resultados diferentes dos destacados na questão
 
@@ -71,8 +66,8 @@ mf<-round(mean(fum),2)
 s1<-sd(fum)
 mnf<-round(mean(n_fum),2)
 s2<-sd(n_fum)
-n1<-dim(array(fum))
-n2<-dim(array(n_fum))
+n1<-length(fum)
+n2<-length(n_fum)
 
 #Quantil associado a probabilidade
 t1<-qt(0.975, df = n1-1)
@@ -96,26 +91,46 @@ sprintf('Não fumantes - Media: %s, limite inferior: %s, limite superior: %s', m
 
 ##Questão 05
 #parte 1
-val_p<-function(c,j,t){
-  val<-c*(1+j)**t
+val_p<- function (c,j) {
+  
+  val<-0
+  n<- length(ent)
+  for(t in 1:n) {
+    
+  val<-val+c[t]/(1+j)^t
+  
+  }
   return(val)
 }
 
 ent<-c(100,200,300,400,500,600)
 
-val_p(ent,0.12,2)
+vp_12<-val_p(ent,0.12)
+sprintf('Valor presente com taxa de desconto de 0.12 a.a.: %s', round(vp_12,2))
 
 #parte 2
-val_p(ent,0.04,2)
+val_p(ent,c(0.04,0.05,0.06))
 
-val_p(ent,0.05,2)
 
 ##Questão 06
 x<-5
 sum<-x
+sum<- as.double(sum)
 
 for (n in 2:1000) {
-  sum<-sum+(-1)^(n+1)*(x^n)/(n*factorial(n))
+  # Alternar o sinal de acordo com o padrão - - + + a partir de n = 2
+  sign <- ifelse((n - 2) %% 4 < 2, -1, 1)
+  
+  term<-(sign*(x^n)/(n*factorial(n)))
+  term<- as.double(term)
+  
+  # Verificar se o termo é finito antes de adicionar à soma
+  if (is.finite(term)) {
+    sum <- sum + term
+  } else {
+    warning(paste("Termo não finito encontrado em n =", n))
+    break
+  }
+  
 }
-
 print(sum)
