@@ -304,7 +304,7 @@ ggcorrplot(
 )
 
 #Let in blank non significant correl
-cor_pmat(mtcars)
+cor_pmat(mtcars) #using confidence interval
 
 ggcorrplot(
   correl,
@@ -322,3 +322,18 @@ library(GGally)
 mtcars %>%
   select(mpg, disp, hp, wt)%>%
   ggpairs()
+
+starwars %>%
+  group_by(eye_color)%>%
+  summarise( media_altura = mean(height, na.rm = TRUE))%>%
+  ggplot(aes(x = reorder(eye_color, -media_altura), y = media_altura))+ #Order by 
+  geom_bar(stat = "identity")
+
+starwars %>%
+  group_by(eye_color)%>%
+  summarise( media_altura = mean(height, na.rm = TRUE))%>%
+  ggplot(aes(x = reorder(eye_color, -media_altura), y = media_altura))+ #Order by 
+  geom_bar(stat = "identity")+
+  theme_light(base_size = 10, base_family = "sans")
+  
+

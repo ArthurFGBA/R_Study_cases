@@ -620,3 +620,49 @@ g1<- ggplot(mtcars, aes(y = mpg, x = disp))+
   geom_point()
 
 g1
+
+#Aula 11/07/2024
+install.packages("BatchGetSymbols")
+library(BatchGetSymbols)
+library(tidyverse)
+library(ggplot2)
+library(ggcorrplot)
+
+
+#set dates
+first.date <- as.Date("2015-01-01")
+last.date <- Sys.Date()
+freq.data <- "weekly"
+tickers <- c('BBDC3.SA', 'ELET3.SA', 'PETR4.SA', 'CYRE3.SA')
+tickers
+
+l.out <- BatchGetSymbols(tickers = tickers,
+                         first.date = first.date,
+                         last.date = last.date,
+                         freq.data = freq.data,
+                         cache.folder = file.path(tempdir(),
+                                                  'BGS_Cache'))
+
+print(l.out$df.control)
+
+p<- l.out$df.tickers %>%
+  ggplot(aes(x = ref.date, y = price.close))+
+  geom_line()+
+  facet_wrap(~ticker, scales = 'free_y')
+
+p
+
+install.packages("fPortfolio")
+library(fPortfolio)
+
+retornos <- as.timeSeries(retornos)
+
+portfolio.ediciente <- tangencyPortfolio(retornos, spec = portfolioSpec(),
+                                         constraints = "LongOnly")
+portfolio.ediciente
+
+#
+portifolio.menor.risco <- minvariancePortfolio()
+
+#
+fronteira <- portfolioFrontier(retornos)
