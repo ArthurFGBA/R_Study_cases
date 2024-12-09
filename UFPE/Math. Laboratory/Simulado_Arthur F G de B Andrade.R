@@ -57,6 +57,16 @@ boxplot(q2[, 2:4],
         ylab = "Valores",
         col = c("lightblue", "lightgreen", "lightpink"),
         border = "darkblue")
+#C)
+ipca_acum<-c()
+ipca_acum[1]<-ipca_b[1,1]+1
+for i in 2:12 {
+  ipca_acum[i]<-ipca_acum[i-1]+ipca_b[i,1]
+}
+
+ipca.acum<-matrix(data =c(ipca_acum),nrow=12, ncol=1)
+colnames(ipca.acum) <- c("IPCA_Acum")
+rownames(ipca.acum) <- c(mes_ano)
 
 #Questão 03
 capitalaizar <- function(c, i,t){
