@@ -444,6 +444,38 @@ ggsave("mesclaQ3_1994-2022.png", plot = mescla, width = 8, height = 6, dpi = 300
 
 #######Q2##########
 ####--------########
+##I - série BR
+unbr<-readr::read_csv("~/MeusProjetos/R_Study_cases/Macroeconomics/desocupação.csv"
+                      ,col_names = TRUE)
+unbr<-as.tibble(unbr)
+
+unbr<-unbr%>%
+  rename(Desocupacao = colnames(unbr[,2]))%>%
+  mutate(Data = yq(Data)
+         , Desocupacao = as.numeric(Desocupacao))
+
+hp_unbr<-hpfilter(ts(unbr$Desocupacao
+                     , start = c(2012,1), frequency = 4), freq = 1600)
+
+unbr<- unbr %>%
+  mutate(trend = hp_unbr$trend, cycle = hp_unbr$cycle)
+
+unbrXtd<- unbr %>%
+  ggplot(aes(x = Data))+
+  geom_line(aes(y= Desocupacao, color = "Desocupação"), linewidth= 1.2) +
+  geom_line(aes(y = trend, color = "Tendência"), linetype = 'dashed', linewidth= 1.2)+
+  labs(title = "Taxa de Desocupação - BR",
+       x = "Trimestre",
+       y = "")+
+  theme_minimal(
+    base_size = 13,
+    base_family = "serif"
+  )+
+  theme(plot.title = element_text(size = 20, hjust = 0.5))
+
+ggsave("UNBRxTrend.png", plot = unbrXtd, width = 8, height = 6, dpi = 300)
+
+#II- relacione com fatos ocorridos
 
 #III - serie USA
 usun<-readr::read_csv("~/MeusProjetos/R_Study_cases/Macroeconomics/UNRATE.csv"
@@ -481,3 +513,6 @@ usunXtd<- usun %>%
   theme(plot.title = element_text(size = 20, hjust = 0.5))
 
 ggsave("USUNxTrend.png", plot = usunXtd, width = 8, height = 6, dpi = 300)
+
+#IV - comparação
+
