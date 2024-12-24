@@ -516,3 +516,23 @@ ggsave("USUNxTrend.png", plot = usunXtd, width = 8, height = 6, dpi = 300)
 
 #IV - comparação
 
+usxbr<-data.frame(
+  Data = unbr$Data,
+  BR_trend = hp_unbr$trend[1:51],
+  US_trend = hp_usun$trend[257:307])
+
+usxbr<- usxbr%>%
+  ggplot(aes(x= Data))+
+  geom_line(aes(y= BR_trend, color = "BR_trend"),linewidth= 1.2)+
+  geom_line(aes(y= US_trend, color = "US_trend"),linewidth= 1.2)+
+  labs(title = "Taxa de Desemprego - BRxUSA - 2012-2024",
+       x = "Trimestre",
+       y = "")+
+  theme_minimal(
+    base_size = 13,
+    base_family = "serif"
+  )+
+  theme(plot.title = element_text(size = 20, hjust = 0.5))
+
+ggsave("USxBR_Trend.png", plot = usxbr, width = 8, height = 6, dpi = 300)
+  
