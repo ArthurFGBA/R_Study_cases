@@ -1,6 +1,6 @@
 #Questão 1 
 install.packages('tidyverse','ggplot2','readr','dplyr',
-                 'stringr','lubridate','purrr','mFilter')
+                 'stringr','lubridate','purrr','mFilter','corrplot')
 library(tidyverse)
 library(readr)
 library(dplyr)
@@ -9,10 +9,14 @@ library(lubridate)
 library(purrr)
 library(ggplot2)
 library(mFilter)
+library(corrplot)
+library(skimr)
 
 getwd()
 setwd("C:/Users/Arthu/OneDrive/Documentos/MeusProjetos/R_Study_cases/Macroeconomics")
 
+########Q1########
+####----------####
 industria<-readr::read_csv("~/MeusProjetos/R_Study_cases/Macroeconomics/horas trabalhadas.csv"
          ,col_names = TRUE)
 
@@ -327,4 +331,113 @@ pibxapu<- pibxapu %>%
 
 ggsave("Cycle_PIBxDesp_Pub.png", plot = pibxapu, width = 8, height = 6, dpi = 300)
 
-#IV - 
+#IV - tabela de correlações e desvios padrão
+cycle<-merge(pib, industria, by = 'Data')
+cycle<-merge(cycle, apu, by = 'Data')
+cycle<-cycle[,c(4,7,10,13,16)]
+colnames(cycle)<-c('PIB','Industria', 'FBCF','Familias', 'Adm.Publica')
+
+cycle_cor<-cor(cycle)
+cycle_cor[,1]
+
+desvios <- cycle %>%
+  select(where(is.numeric)) %>%
+  summarise(across(everything(), sd, na.rm = TRUE))
+
+desvios[2,]<- cycle_cor[1,]
+desvios[3,]<- (desvios[1,]/desvios[1,1])
+
+rownames(desvios)<-c('Desvio Padrão', 'Correlação com PIB','DP relativo ao PIB')
+
+write.csv(desvios,'tabela ciclos.csv', row.names = TRUE)
+
+###Q3############
+####---------------########
+#I- inflação
+ipca<-readr::read_csv("~/MeusProjetos/R_Study_cases/Macroeconomics/IPCA- Geral.csv"
+               ,col_names = TRUE)
+
+ipca<-as.tibble(ipca)
+
+ipca <- ipca %>%
+  select(-`...3`)%>%
+  rename(IPCA = colnames(ipca[,2]))%>%
+  mutate(Data  = ym(format(as.Date(paste0(Data, ".01"),
+                                   format = "%Y.%m.%d"), "%Y-%m")),
+         IPCA = as.numeric(IPCA))
+
+ipca<-ipca[1:516,]
+
+ipc<- ipca %>%
+  ggplot(aes(x = Data, y = IPCA))+
+  geom_line(linewidth=1.2)+
+  labs(title = "Var IPCA - 1980-2022",
+       x = "Mês",
+       y = "")+
+  theme_minimal(
+    base_size = 13,
+    base_family = "serif"
+  )+
+  theme(plot.title = element_text(size = 20, hjust = 0.5))
+
+ggsave("ipca_1980-2022.png", plot = ipc, width = 8, height = 6, dpi = 300)
+
+per1<- ipca[1:174,] %>%
+  ggplot(aes(x = Data, y = IPCA))+
+  geom_line(linewidth=1.2)+
+  labs(title = "Var IPCA - 1980-1994/6",
+       x = "Mês",
+       y = "")+
+  theme_minimal(
+    base_size = 13,
+    base_family = "serif"
+  )+
+  theme(plot.title = element_text(size = 20, hjust = 0.5))
+
+ggsave("ipca_1980-1994.png", plot = per1, width = 8, height = 6, dpi = 300)
+
+per2<- ipca[175:516,] %>%
+  ggplot(aes(x = Data, y = IPCA))+
+  geom_line(linewidth=1.2)+
+  labs(title = "Var IPCA - 1994/7-2022",
+       x = "Mês",
+       y = "")+
+  theme_minimal(
+    base_size = 13,
+    base_family = "serif"
+  )+
+  theme(plot.title = element_text(size = 20, hjust = 0.5))
+
+ggsave("ipca_1994-2022.png", plot = per2, width = 8, height = 6, dpi = 300)
+
+#II - M2
+m2<- readr::read_csv("~/MeusProjetos/R_Study_cases/Macroeconomics/M2.csv"
+                     ,col_names = TRUE)
+
+m2<-as.tibble(m2)
+
+m2 <- m2 %>%
+  select(-`...3`)%>%
+  rename(Var_m2 = colnames(m2[,2]))%>%
+  mutate(Data  = ym(format(as.Date(paste0(Data, ".01"),
+                                   format = "%Y.%m.%d"), "%Y-%m")),
+         Var_m2 = (as.numeric(Var_m2)/lag(Var_m2)-1)*100)
+
+mescla<-merge(m2[2:72,],ipca[104:174,],by = 'Data')
+
+mescla <- mescla %>%
+  ggplot(aes(x = Data))+
+  geom_line(aes(y= IPCA, color = 'IPCA'),linewidth=1.2)+
+  geom_line(aes(y= Var_m2, color = 'M2'), linewidth=1.2)+
+  labs(title = "Var IPCAxM2 - 1988/8-1994/6",
+       x = "Mês",
+       y = "")+
+  theme_minimal(
+    base_size = 13,
+    base_family = "serif"
+  )+
+  theme(plot.title = element_text(size = 20, hjust = 0.5))
+
+ggsave("mesclaQ3_1994-2022.png", plot = mescla, width = 8, height = 6, dpi = 300)
+
+#III- Friedman
