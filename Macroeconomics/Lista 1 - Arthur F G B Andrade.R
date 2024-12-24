@@ -30,9 +30,7 @@ industria<- industria %>%
   summarise(Horas_Trabalhadas = log(mean(Horas_Trabalhadas, na.rm = TRUE)))%>%
   slice(-c(1:16))
 
-plot.ts(industria$Horas_Trabalhadas)
-
-apu <- readr::read_csv2("~/MeusProjetos/R_Study_cases/Macroeconomics/APU .csv",
+apu <- readr::read_csv("~/MeusProjetos/R_Study_cases/Macroeconomics/APU .csv",
                         col_names = TRUE)
 apu<-as.tibble(apu)
 
@@ -40,8 +38,7 @@ apu<- apu%>%
   rename(Adm_Pub = colnames(apu[,2])) %>%
   mutate(Data = yq(Data), 
          Adm_Pub = log(as.numeric(Adm_Pub)))
-
-plot.ts(apu$Adm_Pub)
+plot.ts(apu$Adm_Pub, start = c(1996,1), frequency = 4)
 
 fbcf <- readr::read_csv("~/MeusProjetos/R_Study_cases/Macroeconomics/Formação bruta de capital.csv"
                         ,col_names = TRUE)
@@ -52,8 +49,6 @@ fbcf <- fbcf %>%
   rename(Capital_Fixo = colnames(fbcf[,2]))%>%
   mutate(Data  = yq(Data), Capital_Fixo = log(as.numeric(Capital_Fixo)))
 
-plot.ts(fbcf$Capital_Fixo)
-
 fam<- readr::read_csv("~/MeusProjetos/R_Study_cases/Macroeconomics/Consumo final- Familias.csv"
                       ,col_names = TRUE)
 fam<-as.tibble(fam)
@@ -63,8 +58,6 @@ fam<- fam %>%
   rename(Cons_Familias = colnames(fam[,2]))%>%
   mutate(Data = yq(Data), Cons_Familias = log(as.numeric(Cons_Familias)))
 
-plot.ts(fam$Cons_Familias)
-
 pib<- readr::read_csv("~/MeusProjetos/R_Study_cases/Macroeconomics/PIB - preços de mercado.csv"
                       ,col_names = TRUE)
 pib<-as.tibble(pib)
@@ -73,8 +66,6 @@ pib<- pib %>%
   select(-`...3`)%>%
   rename(PIB_Nominal = colnames(pib[,2]))%>%
   mutate(Data = yq(Data), PIB_Nominal = log(as.numeric(PIB_Nominal)))
-
-plot.ts(pib$PIB_Nominal)
 
 hp_industria <- hpfilter(ts(industria$Horas_Trabalhadas
                             , start = c(1996,1), frequency = 4), freq = 1600)
@@ -186,3 +177,79 @@ DPuXtd<- apu %>%
   theme(plot.title = element_text(size = 20, hjust = 0.5))
 
 ggsave("DPuXtêndencia.png", plot = DPuXtd, width = 8, height = 6, dpi = 300)
+
+#Obtendo Componentes ciclicos 
+#industria 
+Cy_HT<- industria %>%
+  ggplot(aes(x = Data))+
+  geom_line(aes(y= cycle), color = 'blue', linewidth= 1.2) +
+  labs(title = "Componente Ciclico das Horas Trabalhadas",
+       x = "Trimestre",
+       y = "")+
+  theme_minimal(
+    base_size = 13,
+    base_family = "serif"
+  )+
+  theme(plot.title = element_text(size = 20, hjust = 0.5))
+
+ggsave("Cycle_industria.png", plot = Cy_HT, width = 8, height = 6, dpi = 300)
+
+#PIB
+Cy_PIB<- pib %>%
+  ggplot(aes(x = Data))+
+  geom_line(aes(y= cycle), color = 'blue', linewidth= 1.2) +
+  labs(title = "Componente Ciclico do PIB",
+       x = "Trimestre",
+       y = "")+
+  theme_minimal(
+    base_size = 13,
+    base_family = "serif"
+  )+
+  theme(plot.title = element_text(size = 20, hjust = 0.5))
+
+ggsave("Cycle_PIB.png", plot = Cy_PIB, width = 8, height = 6, dpi = 300)
+
+#FBCF
+Cy_FBCF<- fbcf %>%
+  ggplot(aes(x = Data))+
+  geom_line(aes(y= cycle), color = 'blue', linewidth= 1.2) +
+  labs(title = "Componente Ciclico do Capital fixo",
+       x = "Trimestre",
+       y = "")+
+  theme_minimal(
+    base_size = 13,
+    base_family = "serif"
+  )+
+  theme(plot.title = element_text(size = 20, hjust = 0.5))
+
+ggsave("Cycle_FBCF.png", plot = Cy_FBCF, width = 8, height = 6, dpi = 300)
+
+#Familias
+Cy_Fam<- fam %>%
+  ggplot(aes(x = Data))+
+  geom_line(aes(y= cycle), color = 'blue', linewidth= 1.2) +
+  labs(title = "Componente Ciclico do Consumo das Familias",
+       x = "Trimestre",
+       y = "")+
+  theme_minimal(
+    base_size = 13,
+    base_family = "serif"
+  )+
+  theme(plot.title = element_text(size = 20, hjust = 0.5))
+
+ggsave("Cycle_Cons_Fam.png", plot = Cy_Fam, width = 8, height = 6, dpi = 300)
+
+#APU
+Cy_APU<- apu %>%
+  ggplot(aes(x = Data))+
+  geom_line(aes(y= cycle), color = 'blue', linewidth= 1.2) +
+  labs(title = "Componente Ciclico do Despesa Pública",
+       x = "Trimestre",
+       y = "")+
+  theme_minimal(
+    base_size = 13,
+    base_family = "serif"
+  )+
+  theme(plot.title = element_text(size = 20, hjust = 0.5))
+
+ggsave("Cycle_APU.png", plot = Cy_APU, width = 8, height = 6, dpi = 300)
