@@ -253,3 +253,78 @@ Cy_APU<- apu %>%
   theme(plot.title = element_text(size = 20, hjust = 0.5))
 
 ggsave("Cycle_APU.png", plot = Cy_APU, width = 8, height = 6, dpi = 300)
+
+#III- dispersão com PIB
+#PIBxIndustria
+pibxind<- merge(pib, industria, by = "Data") 
+
+pibxind<- pibxind %>%
+  ggplot(aes(x= cycle.x ,y = cycle.y))+
+  geom_point()+
+  geom_smooth(color= 'red', linetype='dashed')+
+  labs(title = "Componente Ciclico do PIBxIndustria",
+       x = "PIB",
+       y = "Horas Trabalhadas")+
+  theme_minimal(
+    base_size = 13,
+    base_family = "serif"
+  )+
+  theme(plot.title = element_text(size = 20, hjust = 0.5))
+
+ggsave("Cycle_PIBxInd.png", plot = pibxind, width = 8, height = 6, dpi = 300)
+
+#PIBxFBCF
+pibxfbcf<- merge(pib, fbcf, by = "Data") 
+
+pibxfbcf<- pibxfbcf %>%
+  ggplot(aes(x= cycle.x ,y = cycle.y))+
+  geom_point()+
+  geom_smooth(color= 'red', linetype='dashed')+
+  labs(title = "Componente Ciclico do PIBxFBCF",
+       x = "PIB",
+       y = "Capital Fixo")+
+  theme_minimal(
+    base_size = 13,
+    base_family = "serif"
+  )+
+  theme(plot.title = element_text(size = 20, hjust = 0.5))
+
+ggsave("Cycle_PIBxFBCF.png", plot = pibxfbcf, width = 8, height = 6, dpi = 300)
+
+#PIBxConsumo das familias]
+pibxfam<- merge(pib, fam, by = "Data") 
+
+pibxfam<- pibxfam %>%
+  ggplot(aes(x= cycle.x ,y = cycle.y))+
+  geom_point()+
+  geom_smooth(color= 'red', linetype='dashed')+
+  labs(title = "Componente Ciclico do PIBxConsumo",
+       x = "PIB",
+       y = "Consumo das Familias")+
+  theme_minimal(
+    base_size = 13,
+    base_family = "serif"
+  )+
+  theme(plot.title = element_text(size = 20, hjust = 0.5))
+
+ggsave("Cycle_PIBxCons_Fam.png", plot = pibxfam, width = 8, height = 6, dpi = 300)
+
+#PIBxDespesa Adm Publica
+pibxapu<- merge(pib, apu, by = 'Data')
+
+pibxapu<- pibxapu %>%
+  ggplot(aes(x= cycle.x ,y = cycle.y))+
+  geom_point()+
+  geom_smooth(color= 'red', linetype='dashed')+
+  labs(title = "Componente Ciclico do PIBxDespesa Pública",
+       x = "PIB",
+       y = "Despesa Pública")+
+  theme_minimal(
+    base_size = 13,
+    base_family = "serif"
+  )+
+  theme(plot.title = element_text(size = 20, hjust = 0.5))
+
+ggsave("Cycle_PIBxDesp_Pub.png", plot = pibxapu, width = 8, height = 6, dpi = 300)
+
+#IV - 
