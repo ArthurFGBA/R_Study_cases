@@ -8,7 +8,7 @@ library(purrr)
 library(ggplot2)
 
 #Questão 01
-pib<-read.csv("C:/Users/Arthu/Downloads/PIB_nominal a preços de mercado.csv", header = TRUE)
+pib<-read.csv("~/MeusProjetos/R_Study_cases/UFPE/PET mini course/PIB_nominal a preços de mercado.csv", header = TRUE)
 
 pib<-as.tibble(pib)
 

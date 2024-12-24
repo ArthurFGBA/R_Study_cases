@@ -10,6 +10,9 @@ library(purrr)
 library(ggplot2)
 library(mFilter)
 
+getwd()
+setwd("C:/Users/Arthu/OneDrive/Documentos/MeusProjetos/R_Study_cases/Macroeconomics")
+
 industria<-readr::read_csv("~/MeusProjetos/R_Study_cases/Macroeconomics/horas trabalhadas.csv"
          ,col_names = TRUE)
 
@@ -87,3 +90,99 @@ hp_fam<- hpfilter(ts(fam$Cons_Familias
 
 hp_apu<- hpfilter(ts(apu$Adm_Pub
                      , start = c(1996,1), frequency = 4), freq = 1600)
+
+#Criação de graficos comparativos entre tendência e real
+#Aplicação Horas trabalhadas
+industria<- industria %>%
+  mutate(trend = hp_industria$trend, cycle = hp_industria$cycle)
+
+htXtd<- industria %>%
+  ggplot(aes(x = Data))+
+  geom_line(aes(y= Horas_Trabalhadas, color = "Horas Trabalhadas"), linewidth= 1.2) +
+  geom_line(aes(y = trend, color = "Tendência"), linetype = 'dashed', linewidth= 1.2)+
+  labs(title = "Horas Trabalhadas - Industria",
+       x = "Trimestre",
+       y = "")+
+  theme_minimal(
+    base_size = 13,
+    base_family = "serif"
+  )+
+  theme(plot.title = element_text(size = 20, hjust = 0.5))
+
+ggsave("horas_trabalhadasXtêndencia.png", plot = htXtd, width = 8, height = 6, dpi = 300)
+
+#Aplicação a série do PIB
+pib<- pib %>%
+  mutate(trend = hp_pib$trend, cycle = hp_pib$cycle)
+
+pibXtd<- pib %>%
+  ggplot(aes(x = Data))+
+  geom_line(aes(y= PIB_Nominal, color = "PIB Nominal"), linewidth= 1.2) +
+  geom_line(aes(y = trend, color = "Tendência"), linetype = 'dashed', linewidth= 1.2)+
+  labs(title = "PIB nominal à Preços de Mercado",
+       x = "Trimestre",
+       y = "")+
+  theme_minimal(
+    base_size = 13,
+    base_family = "serif"
+  )+
+  theme(plot.title = element_text(size = 20, hjust = 0.5))
+
+ggsave("PIBXtêndencia.png", plot = pibXtd, width = 8, height = 6, dpi = 300)
+
+#Apicação a série de FBCF
+fbcf<- fbcf %>%
+  mutate(trend = hp_fbcf$trend, cycle = hp_fbcf$cycle)
+
+CFXtd<- fbcf %>%
+  ggplot(aes(x = Data))+
+  geom_line(aes(y= Capital_Fixo, color = "Capital Fixo"), linewidth= 1.2) +
+  geom_line(aes(y = trend, color = "Tendência"), linetype = 'dashed', linewidth= 1.2)+
+  labs(title = "Formação Bruta de Capital Fixo",
+       x = "Trimestre",
+       y = "")+
+  theme_minimal(
+    base_size = 13,
+    base_family = "serif"
+  )+
+  theme(plot.title = element_text(size = 20, hjust = 0.5))
+
+ggsave("FBCFXtêndencia.png", plot = CFXtd, width = 8, height = 6, dpi = 300)
+
+#Aplicação a despesas das familias
+fam<- fam %>%
+  mutate(trend = hp_fam$trend, cycle = hp_fam$cycle)
+
+DFXtd<- fam %>%
+  ggplot(aes(x = Data))+
+  geom_line(aes(y= Cons_Familias, color = "Consumo das Familias"), linewidth= 1.2) +
+  geom_line(aes(y = trend, color = "Tendência"), linetype = 'dashed', linewidth= 1.2)+
+  labs(title = "Consumo das Familias",
+       x = "Trimestre",
+       y = "")+
+  theme_minimal(
+    base_size = 13,
+    base_family = "serif"
+  )+
+  theme(plot.title = element_text(size = 20, hjust = 0.5))
+
+ggsave("DespFamXtêndencia.png", plot = DFXtd, width = 8, height = 6, dpi = 300)
+
+#Aplicação a despesas públicas
+apu<- apu %>%
+  mutate(trend = hp_apu$trend, cycle = hp_apu$cycle)
+
+DPuXtd<- apu %>%
+  ggplot(aes(x = Data))+
+  geom_line(aes(y= Adm_Pub, color = "Despesa Pública"), linewidth= 1.2) +
+  geom_line(aes(y = trend, color = "Tendência"), linetype = 'dashed', linewidth= 1.2)+
+  labs(title = "Despesa da Administração Pública",
+       x = "Trimestre",
+       y = "")+
+  theme_minimal(
+    base_size = 13,
+    base_family = "serif"
+  )+
+  theme(plot.title = element_text(size = 20, hjust = 0.5))
+
+ggsave("DPuXtêndencia.png", plot = DPuXtd, width = 8, height = 6, dpi = 300)
