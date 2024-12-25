@@ -497,7 +497,8 @@ hp_usun<-hpfilter(ts(usun$UNRATE
                      , start = c(1948,1), frequency = 4), freq = 1600)
 
 usun<- usun %>%
-  mutate(trend = hp_usun$trend, cycle = hp_usun$cycle)
+  mutate(trend = hp_usun$trend, cycle = hp_usun$cycle)%>%
+  slice(257:307)
 
 usunXtd<- usun %>%
   ggplot(aes(x = Data))+
@@ -536,3 +537,248 @@ usxbr<- usxbr%>%
 
 ggsave("USxBR_Trend.png", plot = usxbr, width = 8, height = 6, dpi = 300)
   
+######Questão 9########
+###################
+
+#Modelo IS-LM em Economia Fechada com Governo 
+
+#i
+#Simule os valores das variáveis Yt, Ct, It, Tt, Gt, rt, St, na ausência de mudanças nas políticas, para 40 períodos. Apresente os gráficos das GIRFS.
+
+# Simulação
+n <- 40
+time <- 1:n
+
+# Parâmetros <- Valor
+c_0 <- 100
+c_1 <- 0.8
+c_2 <- 0.3
+A <- 400
+a <- 0.8
+rho <- 0.9 # rho é o "p" em grego
+
+# Valores iniciais das variáveis econômicas de Produção, Consumo e Investimento
+Y <- numeric(n)
+C <- numeric(n)
+Inv <- numeric(n)
+
+# Variáveis Exógenas
+T_bar <- rep(100, n)
+G_bar <- rep(100, n)
+sup_prim <- numeric(n)
+r_bar <- rep(10.75, n) # Nível da Selic
+
+# Choques
+u_g <- numeric(n)
+u_t <- numeric(n)
+u_r <- numeric(n)
+
+# Simulação das Variáveis Exógenas nos desvio percentual do valor do SS
+for (i in 2:n) {
+  G_bar[i] <- G_bar[i] + u_g[i]
+  T_bar[i] <- T_bar[i] + u_t[i]
+  r_bar[i] <- r_bar[i] + u_r[i]
+  
+  Y[i] <- ((1 / (1 - c_1)) * ((c_0 - c_1 * T_bar[i]) + (-a - c_2) * r_bar[i] + A + G_bar[i]))
+  C[i] <- c_0 + c_1 * (Y[i] - T_bar[i]) - c_2 * r_bar[i]
+  Inv[i] <- A - a * r_bar[i]
+  sup_prim[i] <- (T_bar[i] - G_bar[i]) / Y[i]
+}
+
+# Associação dos valores do modelo sem o choque
+G_bar_0 <- G_bar
+T_bar_0 <- T_bar
+Y_0 <- Y
+r_0 <- r_bar
+C_0 <- C
+Inv_0 <- Inv
+sup_prim_0 <- sup_prim
+
+# GIRFs
+G_bar_1 <- ((G_bar - G_bar_0) / G_bar_0) * 100
+T_bar_1 <- ((T_bar - T_bar_0) / T_bar_0) * 100
+Y_1 <- ((Y - Y_0) / Y_0) * 100
+r_1 <- r_bar - r_0
+C_1 <- ((C - C_0) / C_0) * 100
+Inv_1 <- ((Inv - Inv_0) / Inv_0) * 100
+sup_prim_1 <- sup_prim - sup_prim_0
+
+# Gráfico 1
+par(mfrow = c(2, 4), mar = c(4, 4, 2, 1))
+
+plot(time, Y_1, type = "l", xlab = "Tempo", ylab = "Produto", main = "Produto")
+plot(time, C_1, type = "l", xlab = "Tempo", ylab = "Consumo", main = "Consumo")
+plot(time, Inv_1, type = "l", xlab = "Tempo", ylab = "Investimento", main = "Investimento")
+plot(time, G_bar_1, type = "l", xlab = "Tempo", ylab = "Gastos", main = "Gastos")
+plot(time, T_bar_1, type = "l", xlab = "Tempo", ylab = "Impostos", main = "Impostos")
+plot(time, sup_prim_1, type = "l", xlab = "Tempo", ylab = "Superávit Primário", main = "Superávit Primário")
+plot(time, r_1, type = "l", xlab = "Tempo", ylab = "Taxa de Juros", main = "Taxa de Juros")
+
+#ii
+#Simule os valores das variáveis Yt, Ct, It, T¯t, G¯t, r¯t, St na presença de uma Política Fiscal Expansionista representada por um aumento nos gastos de 1% em G¯t em t = 2.
+#Apresente os gráficos das GIRFs
+
+# Valores iniciais das variáveis econômicas de Produção, Consumo e Investimento
+Y <- numeric(n)
+C <- numeric(n)
+Inv <- numeric(n)
+
+# Simulação das Variáveis Exógenas em uma Política Fiscal Expansionista
+T_bar <- rep(100, n)
+G_bar <- rep(100, n)
+sup_prim <- numeric(n)
+r_bar <- rep(10.75, n) # Nível da Selic
+
+# Choques
+u_g <- numeric(n)
+u_t <- numeric(n)
+u_r <- numeric(n)
+
+for (i in 3:n) {
+  u_g[2] <- 0.01 * G_bar[1]  # Aumento de 1% 
+  u_g[i] <- rho * u_g[i - 1]  
+}
+
+# Associação dos valores do modelo com o choque
+for (i in 2:n) {
+  G_bar[i] <- G_bar[i] + u_g[i]
+  T_bar[i] <- T_bar[i] + u_t[i]
+  r_bar[i] <- r_bar[i] + u_r[i]
+  
+  Y[i] <- ((1 / (1 - c_1)) * ((c_0 - c_1 * T_bar[i]) + (-a - c_2) * r_bar[i] + A + G_bar[i]))
+  C[i] <- c_0 + c_1 * (Y[i] - T_bar[i]) - c_2 * r_bar[i]
+  Inv[i] <- A - a * r_bar[i]
+  sup_prim[i] <- (T_bar[i] - G_bar[i]) / Y[i]
+}
+
+# GIRFs
+G_bar_1 <- ((G_bar - G_bar_0) / G_bar_0) * 100
+T_bar_1 <- ((T_bar - T_bar_0) / T_bar_0) * 100
+Y_1 <- ((Y - Y_0) / Y_0) * 100
+r_1 <- r_bar - r_0
+C_1 <- ((C - C_0) / C_0) * 100
+Inv_1 <- ((Inv - Inv_0) / Inv_0) * 100
+sup_prim_1 <- sup_prim - sup_prim_0
+
+# Gráfico 2
+par(mfrow = c(2, 4), mar = c(4, 4, 2, 1))
+
+plot(time, Y_1, type = "l", xlab = "Tempo", ylab = "Produto", main = "Produto")
+plot(time, C_1, type = "l", xlab = "Tempo", ylab = "Consumo", main = "Consumo")
+plot(time, Inv_1, type = "l", xlab = "Tempo", ylab = "Investimento", main = "Investimento")
+plot(time, G_bar_1, type = "l", xlab = "Tempo", ylab = "Gastos", main = "Gastos")
+plot(time, T_bar_1, type = "l", xlab = "Tempo", ylab = "Impostos", main = "Impostos")
+plot(time, sup_prim_1, type = "l", xlab = "Tempo", ylab = "Superávit Primário", main = "Superávit Primário")
+plot(time, r_1, type = "l", xlab = "Tempo", ylab = "Taxa de Juros", main = "Taxa de Juros")
+
+#iii
+#Simule os valores das variáveis Yt, Ct, It, T¯t, G¯t, r¯t, St na presença de uma Política Monetária Expansionista representada por um aumento nos gastos de 1% em r¯t em t = 2.
+#Apresente os gráficos das GIRFs
+
+# Valores iniciais das variáveis econômicas de Produção, Consumo e Investimento
+Y <- numeric(n)
+C <- numeric(n)
+Inv <- numeric(n)
+
+# Simulação das Variáveis Exógenas em uma Política Monetária Expansionista
+T_bar <- rep(100, n)
+G_bar <- rep(100, n)
+sup_prim <- numeric(n)
+r_bar <- rep(10.75, n) # Nível da Selic
+
+# Choques
+u_g <- numeric(n)
+u_t <- numeric(n)
+u_r <- numeric(n)
+
+for (i in 3:n) {
+  u_r[2] <- -0.01 * r_bar[1]  # Diminuição de 1%
+  u_r[i] <- rho * u_r[i - 1]  
+}
+
+# Associação dos valores do modelo com o choque
+for (i in 2:n) {
+  G_bar[i] <- G_bar[i] + u_g[i]
+  T_bar[i] <- T_bar[i] + u_t[i]
+  r_bar[i] <- r_bar[i] + u_r[i]
+  Y[i] <- ((1 / (1 - c_1)) * ((c_0 - c_1*T_bar[i]) + (-a - c_2)*r_bar[i] + A +G_bar[i]))
+  C[i] <- c_0 + c_1 * (Y[i] - T_bar[i]) - c_2*r_bar[i]
+  Inv[i] <- A - a * r_bar[i]
+  sup_prim[i] <- (T_bar[i] - G_bar[i]) / Y[i]
+}  
+
+# GIRFs 
+G_bar_1 <- ((G_bar - G_bar_0) / G_bar_0) * 100
+T_bar_1 <- ((T_bar - T_bar_0) / T_bar_0) * 100
+Y_1 <- ((Y - Y_0) / Y_0) * 100
+r_1 <- r_bar - r_0
+C_1 <- ((C - C_0) / C_0) * 100
+Inv_1 <- ((Inv - Inv_0) / Inv_0) * 100
+sup_prim_1 <- sup_prim - sup_prim_0
+
+# Gráfico 3
+par(mfrow = c(2, 4), mar = c(4, 4, 2, 1))
+
+plot(time, Y_1, type = "l", xlab = "Tempo", ylab = "Produto", main = "Produto")
+plot(time, C_1, type = "l", xlab = "Tempo", ylab = "Consumo", main = "Consumo")
+plot(time, Inv_1, type = "l", xlab = "Tempo", ylab = "Investimento", main = "Investimento")
+plot(time, G_bar_1, type = "l", xlab = "Tempo", ylab = "Gastos", main = "Gastos")
+plot(time, T_bar_1, type = "l", xlab = "Tempo", ylab = "Impostos", main = "Impostos")
+plot(time, sup_prim_1, type = "l", xlab = "Tempo", ylab = "Superávit Primário", main = "Superávit Primário")
+plot(time, r_1, type = "l", xlab = "Tempo", ylab = "Taxa de Juros", main = "Taxa de Juros")
+
+#iv
+#Simule os valores das variáveis Yt, Ct, It, T¯t, G¯t, r¯t, St na presença de uma Política Fiscal Expansionista representada por um aumento nos gastos de 1% em T¯t em t = 2.
+#Apresente os gráficos das GIRFs
+
+# Valores iniciais das variáveis econômicas de Produção, Consumo e Investimento
+Y <- numeric(n)
+C <- numeric(n)
+Inv <- numeric(n)
+
+# Simulação das Variáveis Exógenas em uma Política Fiscal Expansionista
+T_bar <- rep(100, n)
+G_bar <- rep(100, n)
+sup_prim <- numeric(n)
+r_bar <- rep(10.75, n) # Nível da Selic
+
+# Choques
+u_g <- numeric(n)
+u_t <- numeric(n)
+u_r <- numeric(n)
+
+for (i in 3:n) {
+  u_t[2] <- -0.01 * T_bar[1]  # Diminuição de 1%
+  u_t[i] <- rho * u_t[i - 1]  
+}
+
+# Associação dos valores do modelo com o choque
+for (i in 2:n) {
+  G_bar[i] <- G_bar[i] + u_g[i]
+  T_bar[i] <- T_bar[i] + u_t[i]
+  r_bar[i] <- r_bar[i] + u_r[i]
+  Y[i] <- ((1 / (1 - c_1)) * ((c_0 - c_1*T_bar[i]) + (-a - c_2)*r_bar[i] + A +G_bar[i]))
+  C[i] <- c_0 + c_1 * (Y[i] - T_bar[i]) - c_2*r_bar[i]
+  Inv[i] <- A - a * r_bar[i]
+  sup_prim[i] <- (T_bar[i] - G_bar[i]) / Y[i]
+}  
+
+# GIRFs
+G_bar_1 <- ((G_bar - G_bar_0) / G_bar_0) * 100
+T_bar_1 <- ((T_bar - T_bar_0) / T_bar_0) * 100
+Y_1 <- ((Y - Y_0) / Y_0) * 100
+r_1 <- r_bar - r_0
+C_1 <- ((C - C_0) / C_0) * 100
+Inv_1 <- ((Inv - Inv_0) / Inv_0) * 100
+sup_prim_1 <- sup_prim - sup_prim_0
+
+# Gráfico 4
+par(mfrow = c(2, 4), mar = c(4, 4, 2, 1))
+
+plot(time, Y_1, type = "l", xlab = "Tempo", ylab = "Produto", main = "Produto")
+plot(time, C_1, type = "l", xlab = "Tempo", ylab = "Consumo", main = "Consumo")
+plot(time, Inv_1, type = "l", xlab = "Tempo", ylab = "Investimento", main = "Investimento")
+plot(time, G_bar_1, type = "l", xlab = "Tempo", ylab = "Gastos", main = "Gastos")
+plot(time, T_bar_1, type = "l", xlab = "Tempo", ylab = "Impostos", main = "Impostos")
+plot(time, sup_prim_1, type = "l", xlab = "Tempo", ylab = "Superávit Primário", main = "Superávit Primário")
+plot(time, r_1, type = "l", xlab = "Tempo", ylab = "Taxa de Juros", main = "Taxa de Juros")
